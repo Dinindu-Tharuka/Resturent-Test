@@ -1,0 +1,6 @@
+env
+billing/migrations/*
+!billing/migrations/__init__.py
+
+user/migrations/*
+!user/migrations/__init__.py
