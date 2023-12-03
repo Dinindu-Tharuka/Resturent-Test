@@ -10,3 +10,5 @@ user/__pycache__
 store/migrations/*
 !store/migrations/__init__.py
 store/__pycache__
+
+settings/__pycache__
