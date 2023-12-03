@@ -7,5 +7,5 @@ class UserProfileAdmin(admin.ModelAdmin):
     pass
 
 @admin.register(UserAccount)
-class UserAccountAdmin(UserAdmin):
+class UserAccountAdmin(admin.ModelAdmin):
     pass

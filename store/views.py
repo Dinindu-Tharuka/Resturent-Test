@@ -9,8 +9,12 @@ class CategoryViewSet(ModelViewSet):
 
 
 class ProductViewSet(ModelViewSet):
-    queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        category_id = self.kwargs.get('category_pk')
+        queryset = Product.objects.filter(category_id=category_id).all()
+        return queryset
 
 
 class OrderViewSet(ModelViewSet):
