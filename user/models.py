@@ -35,6 +35,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['email', 'is_superuser', 'is_chef', 'is_cashier', 'is_active']
 
 
+
 class UserProfile(models.Model):
     user_account = models.OneToOneField(UserAccount, on_delete=models.CASCADE, related_name='profile')
     first_name = models.CharField(max_length=50)
