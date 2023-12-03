@@ -1,6 +1,12 @@
 env
 billing/migrations/*
 !billing/migrations/__init__.py
+billing/__pycache__
 
 user/migrations/*
 !user/migrations/__init__.py
+user/__pycache__
+
+store/migrations/*
+!store/migrations/__init__.py
+store/__pycache__
