@@ -15,4 +15,5 @@ orderitem_router.register('order-items', OrderItemViewSet, basename='order-items
 urlpatterns = [
     path('', include(router.urls)),
     path('', include(product_router.urls)),
+    path('', include(orderitem_router.urls))
 ]
