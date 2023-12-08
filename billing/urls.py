@@ -8,5 +8,5 @@ router.register('bill-items', BillItemViewSet, basename='bill-items')
 
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('billing/', include(router.urls))
 ]

@@ -7,4 +7,6 @@ urlpatterns = [
     path('api/', include('billing.urls')),
     path('api/', include('store.urls')),
     path('api/', include('user.urls')),
+    path('api/', include('djoser.urls')),
+    path('api/', include('djoser.urls.jwt')),
 ]
