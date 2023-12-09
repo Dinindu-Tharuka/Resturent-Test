@@ -32,7 +32,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     objects = UserAccountManager()
     
     USERNAME_FIELD = 'user_name'
-    REQUIRED_FIELDS = ['email', 'is_superuser', 'is_chef', 'is_cashier', 'is_active']
+    REQUIRED_FIELDS = ['email', 'is_superuser', 'is_chef', 'is_cashier']
 
 
 
