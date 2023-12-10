@@ -15,6 +15,11 @@ class ProductViewSet(ModelViewSet):
         category_id = self.kwargs.get('category_pk')
         queryset = Product.objects.filter(category_id=category_id).all()
         return queryset
+    
+    def get_serializer_context(self):
+        return {
+            'category_id':self.kwargs['category_pk']
+        }
 
 
 class OrderViewSet(ModelViewSet):

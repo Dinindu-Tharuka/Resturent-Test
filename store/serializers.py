@@ -7,9 +7,15 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'is_food']
 
 class ProductSerializer(serializers.ModelSerializer):
+    category_id = serializers.IntegerField(read_only=True)
     class Meta:
         model = Product
         fields = ['id', 'title', 'price', 'category_id']
+
+    def create(self, validated_data):
+        category_id = self.context['category_id']
+        product = Product.objects.create(category_id=category_id, **validated_data)
+        return product
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField()
