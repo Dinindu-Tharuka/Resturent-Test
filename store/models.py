@@ -3,6 +3,7 @@ from django.conf import settings
 
 class Category(models.Model):
     title = models.CharField(max_length=100)
+    is_food = models.BooleanField(default=True)
 
 class Product(models.Model):
     title = models.CharField(max_length=100)
