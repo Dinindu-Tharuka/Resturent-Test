@@ -26,6 +26,11 @@ class OrderViewSet(ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
 
+    def get_serializer_context(self):
+        return {
+            'user_id':self.request.user.id
+        }
+
 
 class OrderItemViewSet(ModelViewSet):
     queryset = OrderItem.objects.all()

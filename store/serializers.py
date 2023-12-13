@@ -31,13 +31,15 @@ class OrderItemSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     orderitems = OrderItemSerializer(many=True, read_only=True)
     total = serializers.SerializerMethodField(method_name='calculate_total')
+    created_user_id = serializers.IntegerField(read_only=True)
     class Meta:
         model = Order
-        fields = ['id', 'table', 'customer_name', 'discount', 'is_takeway', 'created_user_id', 'date', 'orderitems', 'total']
+        fields = ['id', 'table', 'customer_name', 'discount', 'is_takeway', 'created_user_id', 'date', 'orderitems', 'total', 'is_order_canceld']
 
     def calculate_total(self, order:Order):
         return sum([item.product.price * item.quantity for item in order.orderitems.all()]) - order.discount
 
     def create(self, validated_data):
-        insatance = Order.objects.create(created_user_id=1, **validated_data)
+        user_id = self.context['user_id']
+        insatance = Order.objects.create(created_user_id=user_id, **validated_data)
         return insatance

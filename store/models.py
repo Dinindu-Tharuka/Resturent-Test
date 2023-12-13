@@ -12,11 +12,12 @@ class Product(models.Model):
 
 class Order(models.Model):
     table = models.CharField(max_length=10)
-    customer_name = models.CharField(max_length=255)
-    discount = models.DecimalField(max_digits=8,decimal_places=2)
+    customer_name = models.CharField(max_length=255, default='customer_name')
+    discount = models.DecimalField(max_digits=8,decimal_places=2, default=0)
     is_takeway = models.BooleanField(default=False)
     is_order_open = models.BooleanField(default=False)
-    created_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True)
+    is_order_canceld = models.BooleanField(default=False)
+    created_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True)
     date =models.DateTimeField(auto_now=True)
 
 class OrderItem(models.Model):
