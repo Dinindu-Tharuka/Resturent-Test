@@ -1,10 +1,12 @@
 from django.urls import path, include
 from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
-from .views import CategoryViewSet, ProductViewSet, OrderViewSet, OrderItemViewSet
+from .views import CategoryViewSet, ProductViewSet, OrderViewSet, OrderItemViewSet, AllOrderItemViewSet, AllProductViewSet
 
 router = DefaultRouter()
 router.register('product-categories', CategoryViewSet, basename='product-categories')
 router.register('orders', OrderViewSet, basename='orders')
+router.register('all-order-items', AllOrderItemViewSet, basename='all-orderitems')
+router.register('all-products', AllProductViewSet, basename='all-products')
 
 product_router = NestedDefaultRouter(router, 'product-categories', lookup='category')
 product_router.register('products', ProductViewSet, basename='category-products')

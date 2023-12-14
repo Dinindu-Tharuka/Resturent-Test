@@ -20,6 +20,10 @@ class ProductViewSet(ModelViewSet):
         return {
             'category_id':self.kwargs['category_pk']
         }
+    
+class AllProductViewSet(ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
 
 
 class OrderViewSet(ModelViewSet):
@@ -41,3 +45,7 @@ class OrderItemViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         return { 'order_id':self.kwargs.get('order_pk')}
+    
+class AllOrderItemViewSet(ModelViewSet):
+    queryset = OrderItem.objects.all()
+    serializer_class = OrderItemSerializer
