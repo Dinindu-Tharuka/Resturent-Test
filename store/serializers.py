@@ -19,13 +19,40 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField()
+    item_total = serializers.SerializerMethodField('calculate_item_total')
     class Meta:
         model = OrderItem
-        fields = ['id', 'product_id', 'order_id', 'quantity']
+        fields = ['id', 'product_id', 'order_id', 'quantity', 'item_total']   
+        
+    def calculate_item_total(self, item):
+        try:
+            product = Product.objects.select_related('product').get(id = item.product.id)
+        except:
+            print('Error')
+        return item.quantity 
+    
+    def save(self, **kwargs):
+        try:
+            order_id = int(self.context['order_id'])
+            product_id = self.validated_data['product_id']
+            quantity = self.validated_data['quantity']
+            current_order = Order.objects.prefetch_related('orderitems').get(id=order_id)
+            ids = [(item.product.id, item.id) for item in current_order.orderitems.all()]
 
-    def create(self, validated_data):
-        order_id = int(self.context['order_id'])
-        instance = OrderItem.objects.create(order_id=order_id, **validated_data)
+            for id in ids:
+                if product_id == id[0]:
+                    instance = OrderItem.objects.get(id=id[1])
+                    instance.quantity += quantity
+                    instance.save()
+                    break
+            else:
+                print('not filtered')
+                instance = OrderItem.objects.create(order_id=order_id, **self.validated_data)
+
+        except:
+            print('Error')
+
+        
         return instance
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -34,12 +61,14 @@ class OrderSerializer(serializers.ModelSerializer):
     created_user_id = serializers.IntegerField(read_only=True)
     class Meta:
         model = Order
-        fields = ['id', 'table', 'customer_name', 'discount', 'is_takeway', 'created_user_id', 'date', 'orderitems', 'total', 'is_order_canceld']
+        fields = ['id', 'table', 'customer_name', 'discount', 'is_takeway', 'created_user_id', 'date', 'orderitems', 'total', 'is_order_canceld', 'is_order_open']
 
     def calculate_total(self, order:Order):
-        return sum([item.product.price * item.quantity for item in order.orderitems.all()]) - order.discount
+        return round((sum([item.product.price * item.quantity for item in order.orderitems.all()]) * (100 - order.discount))/100, 2)
 
     def create(self, validated_data):
         user_id = self.context['user_id']
         insatance = Order.objects.create(created_user_id=user_id, **validated_data)
         return insatance
+    
+
