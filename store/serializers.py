@@ -19,17 +19,12 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField()
-    item_total = serializers.SerializerMethodField('calculate_item_total')
+    item_total = serializers.SerializerMethodField(method_name='calculate_item_total', read_only=True)
     class Meta:
         model = OrderItem
         fields = ['id', 'product_id', 'order_id', 'quantity', 'item_total']   
         
-    def calculate_item_total(self, item):
-        try:
-            product = Product.objects.select_related('product').get(id = item.product.id)
-        except:
-            print('Error')
-        return item.quantity 
+    
     
     def save(self, **kwargs):
         try:
@@ -41,19 +36,23 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
             for id in ids:
                 if product_id == id[0]:
-                    instance = OrderItem.objects.get(id=id[1])
-                    instance.quantity += quantity
-                    instance.save()
+                    self.instance = instance = OrderItem.objects.get(id=id[1])
+                    self.instance.quantity += quantity
+                    self.instance.save()
                     break
             else:
-                print('not filtered')
-                instance = OrderItem.objects.create(order_id=order_id, **self.validated_data)
+                self.instance = OrderItem.objects.create(order_id=order_id, **self.validated_data)
 
         except:
             print('Error')
 
         
-        return instance
+        return self.instance
+    
+    def calculate_item_total(self, item:OrderItem):
+        product = Product.objects.get(id = item.product.id)
+        
+        return item.quantity * product.price
 
 class OrderSerializer(serializers.ModelSerializer):
     orderitems = OrderItemSerializer(many=True, read_only=True)
