@@ -2,6 +2,7 @@ from django.urls import path, include
 from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
 from .views import CategoryViewSet, ProductViewSet, OrderViewSet, OrderItemViewSet, AllOrderItemViewSet, AllProductViewSet
 
+
 router = DefaultRouter()
 router.register('product-categories', CategoryViewSet, basename='product-categories')
 router.register('orders', OrderViewSet, basename='orders')
@@ -17,5 +18,5 @@ orderitem_router.register('order-items', OrderItemViewSet, basename='order-items
 urlpatterns = [
     path('store/', include(router.urls)),
     path('store/', include(product_router.urls)),
-    path('store/', include(orderitem_router.urls))
+    path('store/', include(orderitem_router.urls)),
 ]

@@ -1,5 +1,11 @@
+from django.http import HttpResponse
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.conf import settings
+from rest_framework import status
 from .models import Category, Product, Order, OrderItem
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import View
 from .serializers import CategorySerializer, ProductSerializer, OrderSerializer, OrderItemSerializer
 
 
@@ -15,12 +21,13 @@ class ProductViewSet(ModelViewSet):
         category_id = self.kwargs.get('category_pk')
         queryset = Product.objects.filter(category_id=category_id).all()
         return queryset
-    
+
     def get_serializer_context(self):
         return {
-            'category_id':self.kwargs['category_pk']
+            'category_id': self.kwargs['category_pk']
         }
-    
+
+
 class AllProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -32,7 +39,7 @@ class OrderViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         return {
-            'user_id':self.request.user.id
+            'user_id': self.request.user.id
         }
 
 
@@ -44,8 +51,15 @@ class OrderItemViewSet(ModelViewSet):
         return OrderItem.objects.filter(order_id=order_id)
 
     def get_serializer_context(self):
-        return { 'order_id':self.kwargs.get('order_pk')}
-    
+        return {'order_id': self.kwargs.get('order_pk')}
+
+
 class AllOrderItemViewSet(ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
+
+
+
+    
+
+
