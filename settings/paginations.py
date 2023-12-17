@@ -5,3 +5,6 @@ class DefaultPagination(PageNumberPagination):
 
 class UserPagination(PageNumberPagination):
     page_size = 7
+
+class OrderPagination(PageNumberPagination):
+    page_size = 10

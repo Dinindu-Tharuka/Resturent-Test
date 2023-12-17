@@ -65,15 +65,23 @@ class OrderItemSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     orderitems = OrderItemSerializer(many=True, read_only=True)
     total = serializers.SerializerMethodField(method_name='calculate_total')
+    total_product_price = serializers.SerializerMethodField(method_name='total_product_price_cal')
+    service_charge_price = serializers.SerializerMethodField(method_name='service_charge_price_calculation')
     created_user_id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Order
         fields = ['id', 'table', 'customer_name', 'discount', 'is_takeway', 'created_user_id',
-                  'date', 'orderitems', 'total', 'is_order_canceld', 'is_order_open']
+                  'date', 'orderitems', 'total', 'total_product_price', 'is_order_canceld', 'is_order_open', 'service_charge', 'service_charge_price']
 
     def calculate_total(self, order: Order):
-        return round((sum([item.product.price * item.quantity for item in order.orderitems.all()]) * (100 - order.discount))/100, 2)
+        return round(((sum([item.product.price * item.quantity for item in order.orderitems.all()]) * (100 - order.discount))/100) * (100 + order.service_charge)/100, 2)
+    
+    def total_product_price_cal(self, order:Order):
+        return round(sum([item.product.price * item.quantity for item in order.orderitems.all()]), 2)
+    
+    def service_charge_price_calculation(self, order:Order):
+        return round(((sum([item.product.price * item.quantity for item in order.orderitems.all()]) * (100 - order.discount))/100) * (order.service_charge)/100, 2)
 
     def create(self, validated_data):
         user_id = self.context['user_id']

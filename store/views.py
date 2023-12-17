@@ -1,13 +1,7 @@
-from django.http import HttpResponse
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from django.conf import settings
-from rest_framework import status
 from .models import Category, Product, Order, OrderItem
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.views import View
 from .serializers import CategorySerializer, ProductSerializer, OrderSerializer, OrderItemSerializer
-
+from settings.paginations import OrderPagination
 
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
@@ -43,6 +37,12 @@ class OrderViewSet(ModelViewSet):
         }
 
 
+class PageOrderViewSet(ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    pagination_class = OrderPagination
+
+
 class OrderItemViewSet(ModelViewSet):
     serializer_class = OrderItemSerializer
 
@@ -57,9 +57,3 @@ class OrderItemViewSet(ModelViewSet):
 class AllOrderItemViewSet(ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
-
-
-
-    
-
-
