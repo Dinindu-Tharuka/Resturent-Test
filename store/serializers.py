@@ -98,12 +98,15 @@ class FloorSerializer(serializers.ModelSerializer):
     tables = TableSerializer(many=True, read_only=True)
     class Meta:
         model = Floor
-        fields = ['id', 'floor_number', 'table_start_number', 'table_end_number', 'tables']
+        fields = ['id', 'floor_number', 'table_start_number', 'table_end_number', 'vip_table_start_number', 'vip_table_end_number',  'tables']
 
     def create(self, validated_data):
         floor_number = validated_data.get('floor_number')
         table_start_number = validated_data.get('table_start_number')
         table_end_number = validated_data.get('table_end_number')
+        vip_table_start_number = validated_data.get('vip_table_start_number')
+        vip_table_end_number = validated_data.get('vip_table_end_number')
+
 
         floor_instance = super().create(validated_data)
 
@@ -113,7 +116,13 @@ class FloorSerializer(serializers.ModelSerializer):
             if number < 10:
                 tables.append(Table(table_no=f'T{floor_number}0{number}', is_place_order=False, floor_id=floor_instance.id)) 
             else:
-                tables.append(Table(table_no=f'T{floor_number}{number}', is_place_order=False, floor_id=floor_instance.id)) 
+                tables.append(Table(table_no=f'T{floor_number}{number}', is_place_order=False, floor_id=floor_instance.id))
+        
+        for number in range(vip_table_start_number, vip_table_end_number+1):
+            if number < 10:
+                tables.append(Table(table_no=f'V{floor_number}0{number}', is_place_order=False, floor_id=floor_instance.id)) 
+            else:
+                tables.append(Table(table_no=f'V{floor_number}{number}', is_place_order=False, floor_id=floor_instance.id))
 
         Table.objects.bulk_create(tables)
         return floor_instance

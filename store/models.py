@@ -5,11 +5,14 @@ class Floor(models.Model):
     floor_number = models.PositiveIntegerField()
     table_start_number = models.PositiveIntegerField()
     table_end_number = models.PositiveIntegerField()
+    vip_table_start_number = models.PositiveIntegerField(default=0)
+    vip_table_end_number = models.PositiveIntegerField(default=0)
 
 class Table(models.Model):
     table_no = models.CharField(max_length=50)
     is_place_order = models.BooleanField(default=False)
     floor = models.ForeignKey(Floor, on_delete=models.CASCADE, related_name='tables')
+    is_vip = models.BooleanField(default=False)
 
 class Category(models.Model):
     title = models.CharField(max_length=100)
