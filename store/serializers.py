@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Product, Category, Order, OrderItem
+from .models import Product, Category, Order, OrderItem, Floor, Table
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -88,5 +88,15 @@ class OrderSerializer(serializers.ModelSerializer):
         insatance = Order.objects.create(
             created_user_id=user_id, **validated_data)
         return insatance
+    
+class FloorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Floor
+        fileds = ['id', 'floor_start_number', 'floor_end_number']
+
+class TableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Table
+        fields = ['id', 'table_no', 'is_place_order', 'floor']
 
 

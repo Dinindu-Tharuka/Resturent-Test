@@ -1,6 +1,7 @@
-from .models import Category, Product, Order, OrderItem
 from rest_framework.viewsets import ModelViewSet
+from .models import Category, Product, Order, OrderItem, Floor, Table
 from .serializers import CategorySerializer, ProductSerializer, OrderSerializer, OrderItemSerializer
+from .serializers import FloorSerializer, TableSerializer
 from settings.paginations import OrderPagination
 
 class CategoryViewSet(ModelViewSet):
@@ -57,3 +58,12 @@ class OrderItemViewSet(ModelViewSet):
 class AllOrderItemViewSet(ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
+
+
+class FloorViewSet(ModelViewSet):
+    queryset = Floor.objects.all()
+    serializer_class = FloorSerializer
+
+class TableViewSet(ModelViewSet):
+    queryset = Table.objects.all()
+    serializer_class = TableSerializer
