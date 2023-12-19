@@ -2,13 +2,14 @@ from django.db import models
 from django.conf import settings
 
 class Floor(models.Model):
-    floor_start_number = models.PositiveIntegerField()
-    floor_end_number = models.PositiveIntegerField()
+    floor_number = models.PositiveIntegerField()
+    table_start_number = models.PositiveIntegerField()
+    table_end_number = models.PositiveIntegerField()
 
 class Table(models.Model):
     table_no = models.CharField(max_length=50)
     is_place_order = models.BooleanField(default=False)
-    floor = models.ForeignKey(Floor, on_delete=models.CASCADE)
+    floor = models.ForeignKey(Floor, on_delete=models.CASCADE, related_name='tables')
 
 class Category(models.Model):
     title = models.CharField(max_length=100)

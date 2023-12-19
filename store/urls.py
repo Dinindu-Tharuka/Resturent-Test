@@ -13,7 +13,7 @@ router.register('all-products', AllProductViewSet, basename='all-products')
 
 ## Tables
 router.register('floors', FloorViewSet, basename='floors')
-router.register('tables', TableViewSet, basename='tables')
+router.register('all-tables', TableViewSet, basename='all-tables')
 
 table_router = NestedDefaultRouter(router, 'floors', lookup='floor')
 table_router.register('tables', TableViewSet, basename='tables')

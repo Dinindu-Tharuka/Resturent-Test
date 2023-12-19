@@ -89,14 +89,34 @@ class OrderSerializer(serializers.ModelSerializer):
             created_user_id=user_id, **validated_data)
         return insatance
     
-class FloorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Floor
-        fileds = ['id', 'floor_start_number', 'floor_end_number']
-
 class TableSerializer(serializers.ModelSerializer):
     class Meta:
         model = Table
-        fields = ['id', 'table_no', 'is_place_order', 'floor']
+        fields = ['id', 'table_no', 'is_place_order', 'floor_id']
+
+class FloorSerializer(serializers.ModelSerializer):
+    tables = TableSerializer(many=True, read_only=True)
+    class Meta:
+        model = Floor
+        fields = ['id', 'floor_number', 'table_start_number', 'table_end_number', 'tables']
+
+    def create(self, validated_data):
+        floor_number = validated_data.get('floor_number')
+        table_start_number = validated_data.get('table_start_number')
+        table_end_number = validated_data.get('table_end_number')
+
+        floor_instance = super().create(validated_data)
+
+        tables = []
+
+        for number in range(table_start_number, table_end_number+1):
+            if number < 10:
+                tables.append(Table(table_no=f'T{floor_number}0{number}', is_place_order=False, floor_id=floor_instance.id)) 
+            else:
+                tables.append(Table(table_no=f'T{floor_number}{number}', is_place_order=False, floor_id=floor_instance.id)) 
+
+        Table.objects.bulk_create(tables)
+        return floor_instance
+
 
 
