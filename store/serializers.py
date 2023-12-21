@@ -92,39 +92,64 @@ class OrderSerializer(serializers.ModelSerializer):
 class TableSerializer(serializers.ModelSerializer):
     class Meta:
         model = Table
-        fields = ['id', 'table_no', 'is_place_order', 'floor_id']
+        fields = ['id', 'table_no', 'is_place_order', 'floor_id', 'is_vip']
 
 class FloorSerializer(serializers.ModelSerializer):
     tables = TableSerializer(many=True, read_only=True)
+    table_count = serializers.SerializerMethodField(method_name='calculate_table_count')
+    vip_table_count = serializers.SerializerMethodField(method_name='vip_calculate_table_count')
     class Meta:
         model = Floor
-        fields = ['id', 'floor_number', 'table_start_number', 'table_end_number', 'vip_table_start_number', 'vip_table_end_number',  'tables']
+        fields = ['id', 'floor_number', 'table_start_number', 'table_end_number', 'vip_table_start_number', 'vip_table_end_number',  'tables', 'table_count', 'vip_table_count']
 
+    def calculate_table_count(self, floor):
+        return len([table for table in floor.tables.all() if not table.is_vip])
+
+    def vip_calculate_table_count(self, floor):
+        return len([table for table in floor.tables.all() if table.is_vip])
+    
     def create(self, validated_data):
+       
         floor_number = validated_data.get('floor_number')
         table_start_number = validated_data.get('table_start_number')
         table_end_number = validated_data.get('table_end_number')
         vip_table_start_number = validated_data.get('vip_table_start_number')
         vip_table_end_number = validated_data.get('vip_table_end_number')
-
-
         floor_instance = super().create(validated_data)
 
-        tables = []
-
-        for number in range(table_start_number, table_end_number+1):
-            if number < 10:
-                tables.append(Table(table_no=f'T{floor_number}0{number}', is_place_order=False, floor_id=floor_instance.id)) 
-            else:
-                tables.append(Table(table_no=f'T{floor_number}{number}', is_place_order=False, floor_id=floor_instance.id))
         
-        for number in range(vip_table_start_number, vip_table_end_number+1):
-            if number < 10:
-                tables.append(Table(table_no=f'V{floor_number}0{number}', is_place_order=False, floor_id=floor_instance.id)) 
-            else:
-                tables.append(Table(table_no=f'V{floor_number}{number}', is_place_order=False, floor_id=floor_instance.id))
+
+        tables_start_nums = [int(table) for table in table_start_number.split(',')]
+
+        print('splited start', tables_start_nums)
+        tables_end_nums = [int(table) for table in table_end_number.split(',')]
+
+        print('splited end', tables_end_nums)
+
+        vip_tables_start_nums = [int(table) for table in vip_table_start_number.split(',')]
+        vip_tables_end_nums = [int(table) for table in vip_table_end_number.split(',')]
+
+
+
+        tables = []
+        
+
+        for index,start_num in enumerate(tables_start_nums):
+            print('strat num', start_num, 'end num', tables_end_nums[index])
+            if tables_end_nums[index] - start_num > 0:
+                print('ok')
+                for table_no in range(start_num, tables_end_nums[index]+1):
+                    tables.append(Table(table_no=f'T{table_no}', is_place_order=False, floor_id=floor_instance.id))
+
+        for index,vip_start_num in enumerate(vip_tables_start_nums):
+            if vip_tables_end_nums[index] - vip_start_num > 0 :
+                for table_no in range(vip_start_num, vip_tables_end_nums[index]+1):
+                    tables.append(Table(table_no=f'V{table_no}', is_place_order=False, floor_id=floor_instance.id, is_vip=True))            
+        
 
         Table.objects.bulk_create(tables)
+        
+        
         return floor_instance
 
 

@@ -3,10 +3,10 @@ from django.conf import settings
 
 class Floor(models.Model):
     floor_number = models.PositiveIntegerField()
-    table_start_number = models.PositiveIntegerField()
-    table_end_number = models.PositiveIntegerField()
-    vip_table_start_number = models.PositiveIntegerField(default=0)
-    vip_table_end_number = models.PositiveIntegerField(default=0)
+    table_start_number = models.CharField(max_length=255)
+    table_end_number = models.CharField(max_length=255)
+    vip_table_start_number = models.CharField(max_length=255)
+    vip_table_end_number = models.CharField(max_length=255)
 
 class Table(models.Model):
     table_no = models.CharField(max_length=50)
