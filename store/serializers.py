@@ -29,28 +29,29 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem
-        fields = ['id', 'product_id', 'order_id', 'quantity', 'item_total']
+        fields = ['id', 'product_id', 'order_id', 'quantity', 'item_total', 'datetime', 'is_ok_in_kitchen']
 
     def save(self, **kwargs):
         try:
             order_id = int(self.context['order_id'])
-            product_id = self.validated_data['product_id']
-            quantity = self.validated_data['quantity']
-            current_order = Order.objects.prefetch_related(
-                'orderitems').get(id=order_id)
-            ids = [(item.product.id, item.id)
-                   for item in current_order.orderitems.all()]
+            # product_id = self.validated_data['product_id']
+            # quantity = self.validated_data['quantity']
+            # current_order = Order.objects.prefetch_related(
+            #     'orderitems').get(id=order_id)
+            # ids = [(item.product.id, item.id)
+            #        for item in current_order.orderitems.all()]
 
-            for id in ids:
-                if product_id == id[0]:
-                    self.instance = instance = OrderItem.objects.get(id=id[1])
-                    self.instance.quantity += quantity
-                    self.instance.save()
-                    break
-            else:
-                self.instance = OrderItem.objects.create(
+            # for id in ids:
+            #     if product_id == id[0]:
+            #         self.instance = instance = OrderItem.objects.get(id=id[1])
+            #         self.instance.quantity += quantity
+            #         self.instance.save()
+            #         break
+            # else:
+            #     self.instance = OrderItem.objects.create(
+            #         order_id=order_id, **self.validated_data)
+            self.instance = OrderItem.objects.create(
                     order_id=order_id, **self.validated_data)
-
         except:
             print('Error')
 

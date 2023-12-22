@@ -32,10 +32,12 @@ class Order(models.Model):
     is_order_canceld = models.BooleanField(default=False)
     service_charge = models.DecimalField(max_digits=10,decimal_places=2, default=0)
     created_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True)
-    date =models.DateTimeField(auto_now=True)
+    date = models.DateTimeField(auto_now_add=True)
 
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     order  = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='orderitems')
     quantity = models.IntegerField()
+    datetime = models.DateTimeField(auto_now_add=True)
+    is_ok_in_kitchen = models.BooleanField(default=False)
     
