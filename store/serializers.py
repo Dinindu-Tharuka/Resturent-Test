@@ -10,10 +10,19 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     category_id = serializers.IntegerField(read_only=True)
-
+    orderitem_count = serializers.IntegerField(read_only=True)
+    orderitem_total_quantity = serializers.SerializerMethodField(method_name='get_orderitem_total_quantity')
+    orderitems_total_price = serializers.SerializerMethodField(method_name='get_orderitems_total_price')
     class Meta:
         model = Product
-        fields = ['id', 'title', 'price', 'category_id']
+        fields = ['id', 'title', 'price', 'category_id', 'orderitem_count', 'orderitem_total_quantity', 'orderitems_total_price']
+
+    def get_orderitems_total_price(self, product):
+        total = sum([item.quantity * product.price for item in  product.orderitems.all()])
+        return total
+    def get_orderitem_total_quantity(self,product):
+        total = sum([item.quantity for item in  product.orderitems.all()])
+        return total
 
     def create(self, validated_data):
         category_id = self.context['category_id']

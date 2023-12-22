@@ -1,9 +1,10 @@
+from django.db.models import Count
 from rest_framework.viewsets import ModelViewSet
-from .models import Category, Product, Order, OrderItem, Floor, Table
-from .serializers import CategorySerializer, ProductSerializer, OrderSerializer, OrderItemSerializer
-from .serializers import FloorSerializer, TableSerializer
 from settings.paginations import OrderPagination
 from settings.functions import ConvertDateToDateTime
+from .models import Category, Product, Order, OrderItem, Floor, Table
+from .serializers import FloorSerializer, TableSerializer
+from .serializers import CategorySerializer, ProductSerializer, OrderSerializer, OrderItemSerializer
 
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
@@ -25,8 +26,23 @@ class ProductViewSet(ModelViewSet):
 
 
 class AllProductViewSet(ModelViewSet):
-    queryset = Product.objects.all()
+    
     serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        queryset = Product.objects.annotate(orderitem_count=Count('orderitems')).all()
+
+        startDate = self.request.GET.get('startDate')
+        endDate = self.request.GET.get('endDate')
+        productId = self.request.GET.get('productId')
+
+        if startDate or endDate:
+            convertDate = ConvertDateToDateTime(startDate, endDate)
+            queryset = queryset.filter(orderitems__datetime__range=(convertDate.converted_min(), convertDate.converted_max()))
+
+        if productId and productId != 0:
+            queryset = queryset.filter(id=productId)
+        return queryset
 
 
 class OrderViewSet(ModelViewSet):    
@@ -67,8 +83,7 @@ class PageOrderViewSet(ModelViewSet):
     
 class AllOrderItemViewSet(ModelViewSet):
     queryset = OrderItem.objects.all()
-    serializer_class = OrderItemSerializer
-    
+    serializer_class = OrderItemSerializer    
 
 class OrderItemViewSet(ModelViewSet):
     serializer_class = OrderItemSerializer
