@@ -34,7 +34,7 @@ class AllProductViewSet(ModelViewSet):
     serializer_class = ProductSerializer
 
     def get_queryset(self):
-        queryset = Product.objects.annotate(orderitem_count=Count('orderitems')).all()
+        queryset = Product.objects.prefetch_related('orderitems').annotate(orderitem_count=Count('orderitems')).all()
 
         startDate = self.request.GET.get('startDate')
         endDate = self.request.GET.get('endDate')
@@ -128,9 +128,7 @@ class MultipleMakeProducts(APIView):
         product_objs = [Product(title=row['product'], 
                                 price=row['price'], 
                                 category_id=category_id) for index, row in read_excel.iterrows()]
-        print('rows', product_objs, len(product_objs))
-        print('excel', excel_file)
-        print('category_id',category_id)
+        
 
         Product.objects.bulk_create(product_objs)
         return Response('Ok', status=status.HTTP_200_OK)
