@@ -1,15 +1,19 @@
 from django.db.models import Count
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.parsers import MultiPartParser, FileUploadParser, FormParser
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
 from settings.paginations import OrderPagination
 from settings.functions import ConvertDateToDateTime
+import pandas as pd
 from .models import Category, Product, Order, OrderItem, Floor, Table
-from .serializers import FloorSerializer, TableSerializer
+from .serializers import FloorSerializer, TableSerializer, FileSerializer
 from .serializers import CategorySerializer, ProductSerializer, OrderSerializer, OrderItemSerializer
 
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-
 
 class ProductViewSet(ModelViewSet):
     serializer_class = ProductSerializer
@@ -108,3 +112,25 @@ class TableViewSet(ModelViewSet):
 class AllTableViewSet(ModelViewSet):
     queryset = Table.objects.all()
     serializer_class = TableSerializer
+
+class MultipleMakeProducts(APIView):
+    serializer_class = FileSerializer
+    parser_classes = (FormParser, MultiPartParser)
+    
+    def post(self, request):
+        data = request.data
+        serializer = self.serializer_class(data=data)
+        if not serializer.is_valid():
+            return Response('Error', status=status.HTTP_400_BAD_REQUEST)
+        excel_file = data.get('file')
+        category_id = data.get('category_id')
+        read_excel = pd.read_excel(excel_file)
+        product_objs = [Product(title=row['product'], 
+                                price=row['price'], 
+                                category_id=category_id) for index, row in read_excel.iterrows()]
+        print('rows', product_objs, len(product_objs))
+        print('excel', excel_file)
+        print('category_id',category_id)
+
+        Product.objects.bulk_create(product_objs)
+        return Response('Ok', status=status.HTTP_200_OK)

@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
 from .views import CategoryViewSet, ProductViewSet, OrderItemViewSet, AllOrderItemViewSet, AllProductViewSet
 from .views import PageOrderViewSet, OrderViewSet
-from .views import FloorViewSet, TableViewSet, AllTableViewSet
+from .views import FloorViewSet, TableViewSet, AllTableViewSet, MultipleMakeProducts
 
 router = DefaultRouter()
 router.register('product-categories', CategoryViewSet, basename='product-categories')
@@ -29,4 +29,5 @@ urlpatterns = [
     path('store/', include(product_router.urls)),
     path('store/', include(orderitem_router.urls)),
     path('store/', include(table_router.urls)),
+    path('store/make-multi-products/', MultipleMakeProducts.as_view())
 ]

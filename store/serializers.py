@@ -162,5 +162,8 @@ class FloorSerializer(serializers.ModelSerializer):
         
         return floor_instance
 
+class FileSerializer(serializers.Serializer):
+    file = serializers.FileField()
+    category_id = serializers.IntegerField()
 
 
