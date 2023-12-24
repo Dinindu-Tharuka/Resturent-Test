@@ -127,9 +127,9 @@ AUTH_USER_MODEL = 'user.UserAccount'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',        
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'COERCE_DECIMAL_TO_STRING':False
+    'COERCE_DECIMAL_TO_STRING': False
 }
 
 SIMPLE_JWT = {
@@ -138,7 +138,20 @@ SIMPLE_JWT = {
 }
 
 DJOSER = {
+    'LOGIN_FIELD': 'user_name',
     'USER_CREATE_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND':True,
+    'PASSWORD_RESET_CONFIRM_URL': "password/reset/{uid}/{token}",
 }
+
+# sending email
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'email'
+EMAIL_HOST_PASSWORD = 'app password'
+
+EMAIL_USE_TLS = True
+DOMAIN = 'localhost:5173'
+SITE_NAME = 'localhost:5173'
 
 CORS_ALLOW_ALL_ORIGINS = True
