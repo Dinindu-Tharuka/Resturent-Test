@@ -1,0 +1,30 @@
+td {
+    font-size: 12;
+    text-align: right;
+}
+
+table{
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.line {
+    border-bottom: 2px solid #383838;
+}
+.padding {
+    padding: 7px;
+}
+
+.textalignReight{
+    text-align: right;
+}
+
+
+.left{
+    text-align: left;
+}
+
+.center{
+    text-align: center;
+}
