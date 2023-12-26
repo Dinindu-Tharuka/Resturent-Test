@@ -19,6 +19,10 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
+SECURE_SSL_REDIRECT=False
+SESSION_COOKIE_SECURE=False
+CSRF_COOKIE_SECURE=False
+
 
 # Application definition
 
