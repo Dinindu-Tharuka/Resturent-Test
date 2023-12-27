@@ -3,6 +3,8 @@
 from pathlib import Path
 from datetime import timedelta
 import os
+import socket
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -15,7 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-n#-_#3e9@29t*-n7zy7gpjx1$2gfjvr4@e^)$0fq!+=y18r^)$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
